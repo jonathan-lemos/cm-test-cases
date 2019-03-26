@@ -1,2 +1,0 @@
-void x(void) {}
-int main(void) { if (x() < 1.0) return 0; }

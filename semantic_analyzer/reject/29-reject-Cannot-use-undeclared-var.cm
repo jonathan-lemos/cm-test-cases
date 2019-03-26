@@ -1,2 +1,0 @@
-int x(int y) { return y; }
-int main(void) { return x; }

@@ -1,4 +1,4 @@
 int v(void) { return 3; }
 int x(int a, int b, int c) { return a + b + c; }
 float y(int x, float y) { return y; }
-int main(void) { v(); y(1, 2.0); return x(1, 2, v()); }
+void main(void) { v(); y(1, 2.0); x(1, 2, v()); }

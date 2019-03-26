@@ -1,1 +1,2 @@
-int main(void) {return 4.0; }
+int x(void) { return 4.0; }
+void main(void) { x(); }

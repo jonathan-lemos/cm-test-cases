@@ -1,0 +1,2 @@
+void x(void) {}
+void main(void) { 2 * x(); }

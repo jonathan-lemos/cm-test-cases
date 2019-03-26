@@ -1,2 +1,2 @@
 int x(int y) { int y; return y; }
-int main(void) { return 0; }
+void main(void) { }

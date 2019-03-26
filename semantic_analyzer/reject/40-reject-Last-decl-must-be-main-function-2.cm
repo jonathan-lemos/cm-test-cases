@@ -1,2 +1,2 @@
-int x; int x;
 void main(void) { }
+void v(void) {}

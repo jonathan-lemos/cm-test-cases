@@ -1,1 +1,1 @@
-int main(void) { int x = input(); output(x); return x; }
+void main(void) { int x = input(); output(x); }

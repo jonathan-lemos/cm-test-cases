@@ -1,1 +1,2 @@
-int main(void) { }
+int x(void) {}
+void main(void) { }
