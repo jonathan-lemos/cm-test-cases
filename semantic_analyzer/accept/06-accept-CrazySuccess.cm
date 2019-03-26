@@ -1,13 +1,13 @@
 //ACCEPT
 
 int f(int x) {
-return x;
+    return x;
 }
 
 int main(void) {
-int x[1];
-x[x[x[0]]]
-=
-f(f(f(0)));
-return x[f(x[f(x[0])])];
+    int x[1];
+    x[x[x[0]]]
+    =
+    f(f(f(0)));
+    return x[f(x[f(x[0])])];
 }

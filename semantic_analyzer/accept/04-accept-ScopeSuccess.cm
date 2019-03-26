@@ -1,14 +1,14 @@
 int x;
 int x(int q) { {int q = q; return x + q + x(x);} }
 int main(void) {
-int q;
-int x;
-if (x(x) == x(q)) {
-int x = x(x);
-return x + q;
-}
-else if (1.0 == 1.0) {
-return x + q;
-}
-return x + x + q + q + x(q);
+	int q;
+    int x;
+	if (x(x) == x(q)) {
+        int x = x(x);
+		return x + q;
+    }
+	else if (1.0 == 1.0) {
+		return x + q;
+    }
+	return x + x + q + q + x(q);
 }
