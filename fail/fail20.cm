@@ -1,0 +1,2 @@
+void x(void) {}
+int main(void) { int x[4]; x[x()] = 4; return 0; }

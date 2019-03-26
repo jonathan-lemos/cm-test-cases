@@ -1,0 +1,9 @@
+float x(void) { return 4.0; }
+int y(int x) { return x * 2; }
+int main(void) {
+float x;
+int y;
+x = 2.0 + 3.0e4 * (5.0e-2 / (4.0 + x()));
+y = 2 + 3 / (4 + 5) / y(4);
+return y;
+}

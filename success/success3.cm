@@ -1,0 +1,9 @@
+int x(int q) { return q; }
+int y(int q[]) { return q[0]; }
+int main(void) {
+int x[4];
+x[0] = 4;
+x[1 * (1 + 4)] = 7;
+x[main() + 9] = 18 + 4;
+return x[main() + 9] + x(x[1]) + y(x);
+}

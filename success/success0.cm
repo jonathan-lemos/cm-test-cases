@@ -1,0 +1,5 @@
+int x(void) { return 4; return 8; }
+void y(void) { return; return; }
+void z(void) { }
+float aa(void) {return 4.0E-13; return 4.0; }
+int main(void) { return 0; }

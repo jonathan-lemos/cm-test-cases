@@ -1,0 +1,1 @@
+int main(void) { float x; x = 2; return 0; }
