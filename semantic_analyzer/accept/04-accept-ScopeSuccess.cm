@@ -1,5 +1,5 @@
 int x;
-int x(int q) { {int q = q; return x + q + x(x);} }
+int x(int q) { {int q; q = q; return x + q + x(x);} }
 void main(void) {
     int q;
     int x;
