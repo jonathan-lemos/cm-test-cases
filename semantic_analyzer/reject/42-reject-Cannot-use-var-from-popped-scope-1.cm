@@ -1,0 +1,8 @@
+void main(void) {
+	if (1) {
+        int x;
+    }
+	else {
+        x = 4;
+    }
+}

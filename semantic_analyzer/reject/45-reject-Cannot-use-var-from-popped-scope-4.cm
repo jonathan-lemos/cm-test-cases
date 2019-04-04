@@ -1,0 +1,7 @@
+int r(int y) {
+    return y;
+}
+void main(void) {
+	int z;
+	z = y + 4;
+}
