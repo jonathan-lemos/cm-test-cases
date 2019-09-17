@@ -1,0 +1,4 @@
+void main(void) {
+	if (x) y;
+	if (x) y; else z;
+}
