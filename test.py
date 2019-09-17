@@ -65,19 +65,27 @@ for test_case in os.listdir(f"{basedir}/reject"):
         failed_reject.append((test_case, s))
 
 for fname, output in failed_accept:
-    print(f"Failed case '{fname}':")
+    print(f"Failed case '{fname}'")
+    print(">>>\033[34m")
+    print(open(f"{basedir}/accept/{fname}", "r").read())
+    print("\033[m>>>")
     print("Expected: ACCEPT")
-    print("Actual: >>>")
+    print("Actual")
+    print(">>>\033[34m")
     print(output)
-    print(">>>")
+    print("\033[m>>>")
     print()
 
 for fname, output in failed_reject:
-    print(f"Failed case '{fname}':")
+    print(f"Failed case '{fname}'")
+    print(">>>\033[34m")
+    print(open(f"{basedir}/reject/{fname}", "r").read())
+    print("\033[m>>>")
     print("Expected: REJECT")
-    print("Actual: >>>")
+    print("Actual")
+    print(">>>\033[34m")
     print(output)
-    print(">>>")
+    print("\033[m>>>")
     print()
 
 print(f"Failed \033[34m{str(len(failed_accept) + len(failed_reject))}\033[m out of \033[34m{str(len_total)}\033[m cases")

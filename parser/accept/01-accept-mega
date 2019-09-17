@@ -34,7 +34,7 @@ int foointvoid (int a, int b[], int c, int d[]) {
 			return f;
 		}
 		return g + foointvoid / 9999;
-
+	}
 
 	while ((90 < 91) != (91 > 92)) ;
 	e = a > 0 + 4;
