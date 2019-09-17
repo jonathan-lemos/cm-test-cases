@@ -1,5 +1,4 @@
 void main(void) {
 	void x[44];
 	int y[55];
-	float z[66];
 }

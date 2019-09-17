@@ -46,38 +46,38 @@ len_total = 0
 abspath = os.path.abspath(sys.argv[1])
 for test_case in os.listdir(f"{basedir}/accept"):
     len_total += 1
-    s = subprocess.check_output([abspath, f"{basedir}/accept/{test_case}"]).decode().strip()
+    s = subprocess.check_output([abspath, f"{basedir}/accept/{test_case}"])
+    if type(s) == bytes:
+        s = s.decode().strip()
+    else:
+        s = str(s).strip()
     if s != "ACCEPT":
         failed_accept.append((test_case, s))
 
 for test_case in os.listdir(f"{basedir}/reject"):
     len_total += 1
     s = subprocess.check_output([abspath, f"{basedir}/reject/{test_case}"]).decode().strip()
+    if type(s) == bytes:
+        s = s.decode().strip()
+    else:
+        s = str(s).strip()
     if s != "REJECT":
         failed_reject.append((test_case, s))
 
 for fname, output in failed_accept:
-    print(f"Failed case '{fname}'")
-    print(">>>\033[34m")
-    print(open(f"{basedir}/accept/{fname}", "r").read())
-    print("\033[m>>>")
+    print(f"Failed case '{fname}':")
     print("Expected: ACCEPT")
-    print("Actual:")
-    print(">>>\033[34m")
+    print("Actual: >>>")
     print(output)
-    print("\033[m>>>")
+    print(">>>")
     print()
 
 for fname, output in failed_reject:
-    print(f"Failed case '{fname}'")
-    print(">>>\033[34m")
-    print(open(f"{basedir}/reject/{fname}", "r").read())
-    print("\033[m>>>")
+    print(f"Failed case '{fname}':")
     print("Expected: REJECT")
-    print("Actual:")
-    print(">>>\033[34m")
+    print("Actual: >>>")
     print(output)
-    print("\033[m>>>")
+    print(">>>")
     print()
 
 print(f"Failed \033[34m{str(len(failed_accept) + len(failed_reject))}\033[m out of \033[34m{str(len_total)}\033[m cases")
