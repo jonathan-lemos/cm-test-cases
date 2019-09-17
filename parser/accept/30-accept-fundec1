@@ -1,0 +1,5 @@
+int main(int argc, float argv[]) {
+	return 0;
+}
+
+void main(void) {}

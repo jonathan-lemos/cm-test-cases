@@ -1,0 +1,3 @@
+void main(void) {
+	sub(a, b);
+}
