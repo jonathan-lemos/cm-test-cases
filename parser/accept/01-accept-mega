@@ -7,6 +7,10 @@ void sub(int a, int b) {
 	return;
 }
 
+void yeetsub(int a) {
+	return a;
+}
+
 void newsub(void) {}
 
 int foointvoid (int a, int b[], int c, int d[]) {
@@ -52,6 +56,7 @@ int main(void) {
 	int b[1];
 	int c;
 	int d[1];
+	a = yeetsub(4);
 	sub(4, 6);
 	intmainvoid(a = 4 + 4, b, c, d);
 	newsub();
