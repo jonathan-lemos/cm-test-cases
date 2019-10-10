@@ -5,8 +5,10 @@ import sys
 import re
 import subprocess
 
+base = os.path.dirname(os.path.abspath( __file__ ))
+
 if len(sys.argv) < 3:
-    print(f"Usage: {sys.argv[0]} [path of program] [type of program]")
+    print(f"Usage: {sys.argv[0]} [path of program] {list(sorted(x for x in os.listdir(base) if os.path.isdir(os.path.join(base, x)) and not x.startswith('.')))}")
     sys.exit(0)
 
 if not os.path.exists(sys.argv[1]):
@@ -20,8 +22,6 @@ if not os.path.isfile(sys.argv[1]):
 if not os.access(sys.argv[1], os.X_OK):
     print(f"{sys.argv[1]} cannot be executed")
     sys.exit(1)
-
-base = os.path.dirname(os.path.abspath( __file__ ))
 
 if not os.path.isdir(base):
     print(f"base dir {base} does not exist. fatal fuckin error")
