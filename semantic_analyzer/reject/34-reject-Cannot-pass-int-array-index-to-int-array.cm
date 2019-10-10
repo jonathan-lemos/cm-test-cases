@@ -1,2 +1,0 @@
-void z(int y[]) {}
-void main(void) { int x[4]; z(x[0]); }

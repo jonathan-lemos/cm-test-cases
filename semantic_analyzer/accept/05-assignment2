@@ -1,0 +1,4 @@
+void main(void) {
+	int b[1];
+	b[0] = 7;
+}

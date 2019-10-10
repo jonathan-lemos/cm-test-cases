@@ -1,0 +1,7 @@
+void main(void) {
+	int a[0];
+	int b;
+	while (a[0] + b > (a + b)) {
+
+	}
+}

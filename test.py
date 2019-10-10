@@ -21,7 +21,7 @@ if not os.access(sys.argv[1], os.X_OK):
     print(f"{sys.argv[1]} cannot be executed")
     sys.exit(1)
 
-base = re.sub("/[^/]*$", "", sys.argv[0]) + "/"
+base = os.path.dirname(os.path.abspath( __file__ ))
 
 if not os.path.isdir(base):
     print(f"base dir {base} does not exist. fatal fuckin error")
@@ -46,7 +46,10 @@ len_total = 0
 abspath = os.path.abspath(sys.argv[1])
 for test_case in os.listdir(f"{basedir}/accept"):
     len_total += 1
-    s = subprocess.check_output([abspath, f"{basedir}/accept/{test_case}"])
+    try:
+        s = subprocess.check_output([abspath, f"{basedir}/accept/{test_case}"], stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        s = e.output
     if type(s) == bytes:
         s = s.decode().strip()
     else:
@@ -56,7 +59,10 @@ for test_case in os.listdir(f"{basedir}/accept"):
 
 for test_case in os.listdir(f"{basedir}/reject"):
     len_total += 1
-    s = subprocess.check_output([abspath, f"{basedir}/reject/{test_case}"]).decode().strip()
+    try:
+        s = subprocess.check_output([abspath, f"{basedir}/reject/{test_case}"], stderr=subprocess.STDOUT).decode().strip()
+    except subprocess.CalledProcessError as e:
+        s = e.output
     if type(s) == bytes:
         s = s.decode().strip()
     else:

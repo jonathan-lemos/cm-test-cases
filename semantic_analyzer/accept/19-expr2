@@ -1,0 +1,9 @@
+int foo(int a) {
+	return a + 1;
+}
+
+void main(void) {
+	int a;
+	int b[0];
+	a = 4 + (foo(4) * (foo(5) / foo(6))) > 4 - 999 / ((((b[8])) / 9 ));
+}

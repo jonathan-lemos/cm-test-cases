@@ -1,5 +1,0 @@
-int x(void) { return 4; return 8; }
-void y(void) { return; return; }
-void z(void) { }
-float aa(void) { if (1 == 0) { return 4.0E-13; } }
-void main(void) { main(); }

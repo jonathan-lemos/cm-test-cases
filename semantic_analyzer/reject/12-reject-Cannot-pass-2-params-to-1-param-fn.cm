@@ -1,2 +1,0 @@
-int x(int a) { return 0; }
-void main(void) { x(1, 1); }

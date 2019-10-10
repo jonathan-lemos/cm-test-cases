@@ -1,2 +1,0 @@
-float x(void) {return 4; }
-void main(void) { }

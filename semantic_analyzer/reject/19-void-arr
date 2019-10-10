@@ -1,0 +1,3 @@
+void main(void) {
+	void x[0];
+}

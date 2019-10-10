@@ -1,0 +1,10 @@
+int main;
+
+void main(void) {
+	main = 4;
+	main();
+	{
+		int main[0];
+		main[1] = 9;
+	}
+}

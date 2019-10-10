@@ -1,1 +1,0 @@
-void main(void) { int x; int y; float z; x = y = 4.0; }

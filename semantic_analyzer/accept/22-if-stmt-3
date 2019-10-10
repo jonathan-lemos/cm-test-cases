@@ -1,0 +1,9 @@
+int foo(int a) {
+	return a / 2 == 1;
+}
+
+void main(void) {
+	if (foo(14) / 7 + ((99))) {
+		4;
+	}
+}

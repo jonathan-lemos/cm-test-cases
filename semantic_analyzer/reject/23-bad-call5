@@ -1,0 +1,9 @@
+int foo(int a, int b[]) {
+	return a + b;
+}
+
+void main(void) {
+	int a;
+	int b[0];
+	foo(b, a);
+}

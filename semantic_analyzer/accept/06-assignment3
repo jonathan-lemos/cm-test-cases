@@ -1,0 +1,5 @@
+void main(void) {
+	int a[4];
+	int b;
+	a[0] = a[1] = b;
+}

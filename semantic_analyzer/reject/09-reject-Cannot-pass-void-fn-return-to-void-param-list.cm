@@ -1,3 +1,0 @@
-void y(void) { }
-int x(void) { return 0; }
-void main(void) { x(y()); }

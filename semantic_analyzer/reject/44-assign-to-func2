@@ -1,0 +1,5 @@
+int sub(void) {
+	sub = 4;
+	return 4;
+}
+void main(void) {}

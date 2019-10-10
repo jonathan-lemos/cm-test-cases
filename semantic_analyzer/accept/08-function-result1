@@ -1,0 +1,8 @@
+int foo(void) {
+	return 4;
+}
+
+void main(void) {
+	int a;
+	a = foo();
+}
