@@ -6,9 +6,10 @@ import re
 import subprocess
 
 base = os.path.dirname(os.path.abspath( __file__ ))
+dirs = list(sorted(x for x in os.listdir(base) if os.path.isdir(os.path.join(base, x)) and not x.startswith('.')))
 
 if len(sys.argv) < 3:
-    print(f"Usage: {sys.argv[0]} [path of program] {list(sorted(x for x in os.listdir(base) if os.path.isdir(os.path.join(base, x)) and not x.startswith('.')))}")
+    print(f"Usage: {sys.argv[0]} [path of program] {dirs}")
     sys.exit(0)
 
 if not os.path.exists(sys.argv[1]):
@@ -29,7 +30,7 @@ if not os.path.isdir(base):
 
 basedir = f"{base}/{sys.argv[2]}"
 if not os.path.isdir(basedir):
-    print(f"no type of program '{sys.argv[2]}'. must be one of {str([x for x in os.listdir(base) if os.path.isdir(x) and not x.startswith('.') and not x.startswith('__')])}")
+    print(f"no type of program '{sys.argv[2]}'. must be one of {dirs}")
     sys.exit(1)
 
 if not os.path.isdir(f"{basedir}/accept"):
