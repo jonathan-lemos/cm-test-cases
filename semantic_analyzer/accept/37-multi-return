@@ -1,0 +1,13 @@
+int even(int a) {
+	if (a / 2) {
+		return 1;
+	}
+	return 0;
+}
+
+void sub(void) {}
+
+void main(void) {
+	return;
+	return;
+}

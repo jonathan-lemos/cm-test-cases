@@ -16,6 +16,10 @@ void newsub(void) {}
 int foointvoid;
 int barintvoid[8];
 
+int four(void) {
+	return 4;
+}
+
 int foointvoid (int a, int b[], int c, int d[]) {
 	int e;
 	int m;
@@ -45,7 +49,7 @@ int foointvoid (int a, int b[], int c, int d[]) {
 
 	while ((90 < 91) != (91 > 92)) ;
 	e = a > 0 + 4;
-	m = f = g = d[1 + main() / 4 / (4 - 4 + 4 * 4)] = c;
+	m = f = g = d[1 + four() / 4 / (4 - 4 + 4 * 4)] = c;
 	if (a) ; else ;
 	if (m > f) {
 		return d[0];

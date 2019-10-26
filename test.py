@@ -9,7 +9,9 @@ base = os.path.dirname(os.path.abspath( __file__ ))
 dirs = list(sorted(x for x in os.listdir(base) if os.path.isdir(os.path.join(base, x)) and not x.startswith('.')))
 
 if len(sys.argv) < 3:
-    print(f"Usage: {sys.argv[0]} [path of program] {dirs}")
+    print(f"Usage: {sys.argv[0]} [path of p-script] {dirs}")
+    print()
+    print("The script should be able to be executed as './p-script filename.txt'")
     sys.exit(0)
 
 if not os.path.exists(sys.argv[1]):
