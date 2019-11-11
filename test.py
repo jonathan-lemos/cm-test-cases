@@ -4,6 +4,34 @@ import os
 import sys
 import re
 import subprocess
+import concurrent.futures
+
+
+def test(executable, filename, expected_output, timeout_seconds=5):
+    with subprocess.Popen(" ".join([executable, filename]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True) as proc:
+        try:
+            s = (proc.communicate(timeout=timeout_seconds)[0]).decode()
+        except subprocess.CalledProcessError as e:
+            s = e.output
+        except subprocess.TimeoutExpired as e:
+            proc.kill()
+            if e.output is not None:
+                s = e.output.decode()
+            else:
+                s = ""
+            s += f"\n\nTimed out after {timeout_seconds} seconds"
+        proc.kill()
+
+    if type(s) == bytes:
+        s = s.decode().strip()
+    else:
+        s = str(s).strip()
+
+    if s != expected_output:
+        return False, filename, s
+    else:
+        return True, filename
+
 
 base = os.path.dirname(os.path.abspath( __file__ ))
 dirs = list(sorted(x for x in os.listdir(base) if os.path.isdir(os.path.join(base, x)) and not x.startswith('.')))
@@ -43,40 +71,53 @@ if not os.path.isdir(f"{basedir}/reject"):
     print(f"reject dir {basedir}/reject does not exist")
     sys.exit(1)
 
+threads = []
+threads = []
 failed_accept = []
 failed_reject = []
 len_total = 0
 abspath = os.path.abspath(sys.argv[1])
-for test_case in os.listdir(f"{basedir}/accept"):
-    len_total += 1
-    try:
-        s = subprocess.check_output([abspath, f"{basedir}/accept/{test_case}"], stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError as e:
-        s = e.output
-    if type(s) == bytes:
-        s = s.decode().strip()
-    else:
-        s = str(s).strip()
-    if s != "ACCEPT":
-        failed_accept.append((test_case, s))
 
-for test_case in os.listdir(f"{basedir}/reject"):
-    len_total += 1
-    try:
-        s = subprocess.check_output([abspath, f"{basedir}/reject/{test_case}"], stderr=subprocess.STDOUT).decode().strip()
-    except subprocess.CalledProcessError as e:
-        s = e.output
-    if type(s) == bytes:
-        s = s.decode().strip()
-    else:
-        s = str(s).strip()
-    if s != "REJECT":
-        failed_reject.append((test_case, s))
+
+with concurrent.futures.ThreadPoolExecutor() as executor:
+    accept_jobs = []
+    reject_jobs = []
+
+    for test_case in os.listdir(f"{basedir}/accept"):
+        len_total += 1
+        accept_jobs.append(executor.submit(
+            test,
+            abspath,
+            f"{basedir}/accept/{test_case}",
+            "ACCEPT",
+            2,
+        ))
+
+    for test_case in os.listdir(f"{basedir}/reject"):
+        len_total += 1
+        reject_jobs.append(executor.submit(
+            test,
+            abspath,
+            f"{basedir}/reject/{test_case}",
+            "REJECT",
+            2,
+        ))
+
+    for aj in concurrent.futures.as_completed(accept_jobs):
+        res = aj.result()
+        if not res[0]:
+            failed_accept.append((res[1], res[2]))
+
+    for rj in concurrent.futures.as_completed(reject_jobs):
+        res = rj.result()
+        if not res[0]:
+            failed_reject.append((res[1], res[2]))
+
 
 for fname, output in failed_accept:
     print(f"Failed case '{fname}'")
     print(">>>\033[32m")
-    print(open(f"{basedir}/accept/{fname}", "r").read())
+    print(open(fname, "r").read())
     print("\033[m>>>")
     print("Expected: ACCEPT")
     print("Actual")
@@ -88,7 +129,7 @@ for fname, output in failed_accept:
 for fname, output in failed_reject:
     print(f"Failed case '{fname}'")
     print(">>>\033[32m")
-    print(open(f"{basedir}/reject/{fname}", "r").read())
+    print(open(fname, "r").read())
     print("\033[m>>>")
     print("Expected: REJECT")
     print("Actual")
