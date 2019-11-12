@@ -33,43 +33,100 @@ def test(executable, filename, expected_output, timeout_seconds=5):
         return True, filename
 
 
+# the directory of test.py
 base = os.path.dirname(os.path.abspath( __file__ ))
-dirs = list(sorted(x for x in os.listdir(base) if os.path.isdir(os.path.join(base, x)) and not x.startswith('.')))
+# the directories within test.py, excluding those that start with '.' or '__'
+dirs = list(sorted(x for x in os.listdir(base) if os.path.isdir(os.path.join(base, x)) and not (x.startswith('.') or x.startswith('__'))))
 
-if len(sys.argv) < 3:
-    print(f"Usage: {sys.argv[0]} [path of p-script] {dirs}")
+
+def print_help():
+    print(f"{sys.argv[0]} v 1.4")
+    print(f"Runs test cases on your shit code")
     print()
-    print("The script should be able to be executed as './p-script filename.txt'")
+    print(f"USAGE:")
+    print(f"\t{sys.argv[0]} [options] [path of p-script] {dirs}")
+    print(f"\tThe script should be able to be executed on the command-line as './p-script filename.txt'")
+    print()
+    print(f"FLAGS:")
+    print("\t-h, --help             Prints this screen")
+    print("\t-s, --single-threaded  Run only one case at a time. Use this if your code writes to files.")
+
+
+if len(sys.argv) == 1:
+    print_help()
     sys.exit(0)
 
-if not os.path.exists(sys.argv[1]):
-    print(f"{sys.argv[1]} does not exist")
+
+max_threads = max(5, os.cpu_count() * 3)
+p_script = None
+test_cases = None
+
+# process command-line arguments
+for arg in sys.argv[1:]:
+    if arg.startswith("-"):
+        if arg[1:] == "h" or arg[2:] == "help":
+            print_help()
+            exit(0)
+        elif arg[1:] == "s" or arg[2:] == "single-threaded":
+            max_threads = 1
+        else:
+            print_help()
+            print()
+            print(f"Unrecognized argument '{arg}'")
+            sys.exit(1)
+    else:
+        if p_script is None:
+            p_script = arg
+        elif test_cases is None:
+            test_cases = arg
+        else:
+            print_help()
+            print()
+            print(f"Got an extra argument '{arg}'.")
+            sys.exit(1)
+
+
+if p_script is None:
+    print_help()
+    print()
+    print("Expected a p-script, didn't get one.")
     sys.exit(1)
 
-if not os.path.isfile(sys.argv[1]):
-    print(f"{sys.argv[1]} is a directory")
+if test_cases is None:
+    print_help()
+    print()
+    print(f"Expected a test suite within {dirs}, didn't get one.")
     sys.exit(1)
 
-if not os.access(sys.argv[1], os.X_OK):
-    print(f"{sys.argv[1]} cannot be executed")
+if not os.path.exists(p_script):
+    print(f"The given p-script at '{p_script}' does not exist.")
+    sys.exit(1)
+
+if not os.path.isfile(p_script):
+    print(f"The given p-script at '{p_script}' is a directory.")
+    sys.exit(1)
+
+if not os.access(p_script, os.X_OK):
+    print(f"The given p-script at '{p_script}' is not executable. Run 'chmod a+x {p_script}' and try again.")
     sys.exit(1)
 
 if not os.path.isdir(base):
     print(f"base dir {base} does not exist. fatal fuckin error")
     sys.exit(1)
 
-basedir = f"{base}/{sys.argv[2]}"
+basedir = f"{base}/{test_cases}"
 if not os.path.isdir(basedir):
-    print(f"no type of program '{sys.argv[2]}'. must be one of {dirs}")
+    print(f"Invalid set of cases '{test_cases}'. Must be one of {dirs}.")
     sys.exit(1)
 
 if not os.path.isdir(f"{basedir}/accept"):
-    print(f"accept dir {basedir}/accept does not exist")
+    print(f"The given set of cases is missing '{basedir}/accept'.")
     sys.exit(1)
 
 if not os.path.isdir(f"{basedir}/reject"):
-    print(f"reject dir {basedir}/reject does not exist")
+    print(f"The given set of cases is missing '{basedir}/reject'.")
     sys.exit(1)
+
 
 threads = []
 threads = []
@@ -79,7 +136,7 @@ len_total = 0
 abspath = os.path.abspath(sys.argv[1])
 
 
-with concurrent.futures.ThreadPoolExecutor() as executor:
+with concurrent.futures.ThreadPoolExecutor(max_workers=max_threads) as executor:
     accept_jobs = []
     reject_jobs = []
 
