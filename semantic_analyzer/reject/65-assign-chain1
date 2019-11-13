@@ -1,0 +1,8 @@
+int subb(void) {
+	return 2;
+}
+
+void main(void) {
+	int a;
+	a = subb() = 4;
+}
