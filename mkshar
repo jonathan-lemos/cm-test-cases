@@ -1,0 +1,208 @@
+#!/bin/bash
+
+if [[ -z $5 ]]; then
+    echo "mkshar v 1.3"
+    echo "Turns your project into an Eggen-style shar because I'm sick of people asking how to do it."
+    echo ""
+    echo "It automatically makes a typescript for your project demonstating your project running on the given test case."
+	echo ""
+    echo "It also automatically makes the Makefile and p-script if they do not exist and your project is written in C, Java, or Python."
+	echo ""
+    echo "It also brings up a template doc.txt for you to fill in if you do not have a documentation file in the project's directory."
+	echo 'By default, the doc file will be edited with pico, but you can change this to any editor by modifying the $EDITOR shell variable.'
+    echo ""
+    echo -e "\033[31;1mIt does not turn in the project for you.\033[m It will tell you the command to turn it in though."
+    echo ""
+    echo "Usage: $0 [directory] [project number] [main executable/class] [testcase] [turnin code]"
+    echo ""
+    echo "Parameters:"
+    echo \
+"    [directory]             - The directory containing your project's files.
+                              All of the files in this directory will be included in the resulting shar,
+                              so remove any .class or a.out files from the directory.
+
+                              To use the current directory, give '.' as the argument."
+    echo ""
+    echo \
+"    [project number]        - '1' if this is the first project (lexer)
+                              '2' if this is the second project (parser)
+                              and so on..."
+    echo ""
+    echo \
+"    [main executable/class] - This argument is only used if you do not already have a p-script.
+
+                              For Python projects, this is your main .py file (e.g. 'lexer.py')
+                              For Java projects, this is your main **class** (e.g. 'LexerMain')
+                              For C projects, this can be whatever you want (e.g. 'a.out')"
+    echo ""
+    echo \
+"    [testcase]              - This is a test file to demonstrate your project with.
+                              This can either be an absolute path or a path relative to your project's directory."
+    echo ""
+    echo \
+"    [turnin code]           - This is the turnin code to use with your project (e.g. 'ree4991_1').
+                              This is only used to determine the due date if your project does not have a doc file.
+                              Again, this script does not turn in the project for you."
+    echo ""
+    exit 0
+fi
+
+directory=$1
+prjnum=$2
+main_file=$(echo $3 | sed -re 's/(.*)(\.java|\.c)/\1/')
+testcase=$4
+turnin_code=$5
+
+if ! turnin -d $turnin_code >/dev/null 2>&1; then
+    echo "$turnin_code is not a valid turnin code"
+    exit 1
+fi
+
+curdate=$(date "+%m/%d/%y")
+duedate=$(turnin -d $turnin_code | sed -re "s/.*$turnin_code:\s*(.*)$/\1/" | xargs -I{} date -d {}'-2 days' "+%m/%d/%y")
+
+
+if ! cd $directory; then
+    echo "$directory is not a valid directory."
+    exit 1
+fi
+
+if ! ls $testcase; then
+    echo "$testcase does not exist in the given directory."
+    exit 1
+fi
+
+if [[ -z $EDITOR ]]; then
+	EDITOR=pico
+fi
+
+if ! ls | grep -i 'doc' >/dev/null 2>&1; then
+    echo "[your name]
+[class] Project $prjnum
+[name of project]
+Dr. Eggen
+
+Submitted: $curdate
+Due: $duedate
+
+[explain the overall design, explain how to run the program, files created, files consumed, special concerns. this should be at least a good paragraph.]
+" > doc.txt
+    $EDITOR doc.txt
+fi
+
+if ! ls | grep -i 'makefile' > /dev/null 2>&1; then
+    if ls *.c >/dev/null 2>&1; then
+        echo "all:
+    gcc -std=c99 *.c -o $main_file" > Makefile
+    elif ls *.java >/dev/null 2>&1; then
+        echo "all:
+    javac *.java" > Makefile
+    elif ls *.py >/dev/null 2>&1; then
+        echo "all:
+    @echo 'No compilation needed. Project in python.'" > Makefile
+    else
+        echo "mkshar can only generate makefiles for C, Java, and Python. Write your own Makefile and then mkshar again."
+        exit 1
+    fi
+fi
+
+if ! ls p$prjnum >/dev/null 2>&1; then
+    if ls *.c >/dev/null 2>&1; then
+        echo "#!/bin/bash
+./$main_file \$1" > p$prjnum
+    elif ls *.java >/dev/null 2>&1; then
+        echo "#!/bin/bash
+java $main_file \$1" > p$prjnum
+    elif ls *.py >/dev/null 2>&1; then
+        echo "#!/bin/bash
+python3.6 $main_file \$1" > p$prjnum
+    else
+        echo "mkshar can only generate p-scripts for C, Java, and Python. Write your own p-script and then mkshar again."
+        exit 1
+    fi
+fi
+chmod a+x p$prjnum
+
+if ! mkdir test; then
+    echo "Failed to make test directory."
+    exit 1
+fi
+
+if ! shar * > fn; then
+    echo "Failed to make initial shar."
+    exit 1
+fi
+
+chmod a+x fn
+
+if ! cp fn test/ || ! cd test; then
+    echo "CATASTROPHIC FAILURE"
+    exit 1
+fi
+
+echo "******************************* TESTING SHAR *********************************"
+
+if ! unshar fn; then
+    echo "Failed to unshar that shit"
+    cd ..
+    rm -r test fn
+    exit 1
+fi
+
+if ! make; then
+    echo "makefile didn't work"
+    cd ..
+    rm -r test fn
+    exit 1
+fi
+
+if ! cat $testcase; then
+    echo "failed to cat testcase"
+    cd ..
+    rm -r test fn
+    exit 1
+fi
+
+if ! ./p$prjnum $testcase; then
+    echo "p-script didn't work"
+    cd ..
+    rm -r test
+    exit 1
+fi
+
+cd ..
+rm -r test/*
+mv fn test/
+cd test
+
+echo "******************************* MAKING TYPESCRIPT *********************************"
+script -c "echo -e \"unshar fn\nmake\ncat $testcase\n./p$prjnum $testcase\nexit\n\" | /bin/bash --norc -i"
+if ! mv typescript ..; then
+    echo "Failed to move typescript"
+    exit 1
+fi
+
+cd ..
+rm -r test
+
+if ! shar * > fn; then
+    echo "Failed to make final shar"
+    exit 1
+fi
+
+chmod a+x fn
+
+echo "shar successfully made."
+echo ""
+echo "To check your project's demo run, go to your project's directory and"
+echo "cat typescript"
+echo ""
+echo "To check the integrity of the shar, go to your project's directory,\033[33;1m copy the shar to a new directory,\033[m and"
+echo "'unshar fn'"
+echo ""
+echo "Once you have checked that the shar is okay, go to your project's directory and turn it in with"
+echo ""
+echo "turnin fn $turnin_code"
+echo ""
+echo "\033[31;1mThis script has not turned in the project for you.\033[m Use the above command to do so."
+echo ""

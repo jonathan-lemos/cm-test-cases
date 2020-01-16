@@ -1,0 +1,15 @@
+/* skipme */
+dontskipone /* skipme */ dontskiptwo
+dontskipthree/*/*skipme/* @@@ /** /skipme/**/dontskipfour
+dontskipfive/*skipme
+skipme skipme*/dontskipsix
+ifx abc_def ghi@jkl @ _//skipme
++-*/[]{}()
+		== 	= > < >= <= ===
+123 a456
+		if while else void int return
+whilex elsex voidx intx returnx ifif ifwhile
+
+int main(void x, int y) {
+	return 0;
+}

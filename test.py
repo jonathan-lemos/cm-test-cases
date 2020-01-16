@@ -7,6 +7,11 @@ import subprocess
 import concurrent.futures
 
 
+# returns the input string but green if stdout is a tty, otherwise does nothing
+def green(s):
+    return f"\033[32m{s}\033[m" if sys.stdout.isatty() else str(s)
+
+
 # runs the given executable with the filename as an argument, and checks it against the expected_output
 # will auto-fail after timeout_seconds seconds so the process isn't running forever
 #
@@ -210,30 +215,36 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=max_threads) as executor:
             failed_reject.append((res[1], res[2]))
 
 
-# \033[32m green \033[m not green
 for fname, output in failed_accept:
     print(f"Failed case '{fname}'")
-    print(">>>\033[32m")
-    print(open(fname, "r").read())
-    print("\033[m>>>")
-    print("Expected: \033[32mACCEPT\033[m")
-    print("Actual")
-    print(">>>\033[32m")
-    print(output)
-    print("\033[m>>>")
+    print(">>>")
+    print(green(open(fname, "r").read()))
+    print(">>>")
+    print("Expected:")
+    print(">>>")
+    print(green("ACCEPT"))
+    print(">>>")
+    print("Actual:")
+    print(">>>")
+    print(green(output))
+    print(">>>")
     print()
 
 for fname, output in failed_reject:
     print(f"Failed case '{fname}'")
-    print(">>>\033[32m")
-    print(open(fname, "r").read())
-    print("\033[m>>>")
-    print("Expected: \033[32mREJECT\033[m")
+    print(">>>")
+    print(green(open(fname, "r").read()))
+    print(">>>")
+    print("Expected:")
+    print(">>>")
+    print(green("REJECT"))
+    print(">>>")
     print("Actual")
-    print(">>>\033[32m")
-    print(output)
-    print("\033[m>>>")
+    print(">>>")
+    print(green(output))
+    print(">>>")
     print()
 
-print(f"Failed \033[32m{str(len(failed_accept) + len(failed_reject))}\033[m out of \033[32m{str(len_total)}\033[m cases")
+print(f"Failed {green(str(len(failed_accept) + len(failed_reject)))} out of {green(str(len_total))} cases")
+exit(len(failed_accept) + len(failed_reject))
 
