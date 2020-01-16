@@ -93,13 +93,13 @@ fi
 if ! ls | grep -i 'makefile' > /dev/null 2>&1; then
     if ls *.c >/dev/null 2>&1; then
         echo "all:
-    gcc -std=c99 *.c -o $main_file" > Makefile
+	gcc -std=c99 *.c -o $main_file" > Makefile
     elif ls *.java >/dev/null 2>&1; then
         echo "all:
-    javac *.java" > Makefile
+	javac *.java" > Makefile
     elif ls *.py >/dev/null 2>&1; then
         echo "all:
-    @echo 'No compilation needed. Project in python.'" > Makefile
+	@echo 'No compilation needed. Project in python.'" > Makefile
     else
         echo "mkshar can only generate makefiles for C, Java, and Python. Write your own Makefile and then mkshar again."
         exit 1
@@ -198,14 +198,16 @@ echo ""
 echo "shar successfully made."
 echo ""
 echo "To check your project's demo run, go to your project's directory and"
-echo "cat typescript"
+echo "$ cat typescript"
 echo ""
-echo "To check the integrity of the shar, go to your project's directory,\033[33;1m copy the shar to a new directory,\033[m and"
-echo "'unshar fn'"
+echo -e "To check the integrity of the shar, go to your project's directory,\033[33m copy the shar to a new directory,\033[m and"
+echo "$ unshar fn"
+echo "$ make"
+echo "$ ./p$prjnum $testcase"
 echo ""
 echo "Once you have checked that the shar is okay, go to your project's directory and turn it in with"
 echo ""
-echo "turnin fn $turnin_code"
+echo "$ turnin fn $turnin_code"
 echo ""
 echo -e "\033[31;1mThis script has not turned in the project for you.\033[m Use the above command to do so."
 echo ""
