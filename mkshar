@@ -192,6 +192,9 @@ fi
 
 chmod a+x fn
 
+echo ""
+echo ""
+echo ""
 echo "shar successfully made."
 echo ""
 echo "To check your project's demo run, go to your project's directory and"
