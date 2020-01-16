@@ -204,5 +204,5 @@ echo "Once you have checked that the shar is okay, go to your project's director
 echo ""
 echo "turnin fn $turnin_code"
 echo ""
-echo "\033[31;1mThis script has not turned in the project for you.\033[m Use the above command to do so."
+echo -e "\033[31;1mThis script has not turned in the project for you.\033[m Use the above command to do so."
 echo ""
