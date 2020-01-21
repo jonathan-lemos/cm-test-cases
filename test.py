@@ -9,7 +9,7 @@ import concurrent.futures
 
 # returns the input string but green if stdout is a tty, otherwise does nothing
 def green(s):
-    return f"\033[32m{s}\033[m" if sys.stdout.isatty() else str(s)
+    return "\033[32m" + str(s) + "\033[m" if sys.stdout.isatty() else str(s)
 
 
 # runs the given executable with the filename as an argument, and checks it against the expected_output
@@ -35,7 +35,7 @@ def test(executable, filename, expected_output, timeout_seconds=10):
                 s = e.output.decode()
             else:
                 s = ""
-            s += f"\n\nTimed out after {timeout_seconds} seconds"
+            s += "\n\nTimed out after " + str(timeout_seconds) + " seconds"
         # kill the process one more time. probably not needed but i just want to be sure
         proc.kill()
 
@@ -59,14 +59,14 @@ dirs = list(sorted(x for x in os.listdir(base) if os.path.isdir(os.path.join(bas
 
 
 def print_help():
-    print(f"{sys.argv[0]} v 1.4")
-    print(f"Runs test cases on your shit code")
+    print("" + str(sys.argv[0]) + " v 1.4")
+    print("Runs test cases on your shit code")
     print()
-    print(f"USAGE:")
-    print(f"\t{sys.argv[0]} [options] [path of p-script] {dirs}")
-    print(f"\tThe script should be able to be executed on the command-line as './p-script filename.txt'")
+    print("USAGE:")
+    print("\t" + str(sys.argv[0]) + " [options] [path of p-script] " + str(dirs) + "")
+    print("\tThe script should be able to be executed on the command-line as './p-script filename.txt'")
     print()
-    print(f"FLAGS:")
+    print("FLAGS:")
     print("\t-h, --help             Prints this screen")
     print("\t-s, --single-threaded  Run only one case at a time. Use this if your code writes to files.")
 
@@ -98,7 +98,7 @@ for arg in sys.argv[1:]:
         else:
             print_help()
             print()
-            print(f"Unrecognized argument '{arg}'")
+            print("Unrecognized argument '" + str(arg) + "'")
             sys.exit(1)
     else:
         # this is a positional argument. set p_script/test_cases accordingly
@@ -109,7 +109,7 @@ for arg in sys.argv[1:]:
         else:
             print_help()
             print()
-            print(f"Got an extra argument '{arg}'.")
+            print("Got an extra argument '" + str(arg) + "'.")
             sys.exit(1)
 
 
@@ -122,36 +122,36 @@ if p_script is None:
 if test_cases is None:
     print_help()
     print()
-    print(f"Expected a test suite within {dirs}, didn't get one.")
+    print("Expected a test suite within " + str(dirs) + ", didn't get one.")
     sys.exit(1)
 
 if not os.path.exists(p_script):
-    print(f"The given p-script at '{p_script}' does not exist.")
+    print("The given p-script at '" + str(p_script) + "' does not exist.")
     sys.exit(1)
 
 if not os.path.isfile(p_script):
-    print(f"The given p-script at '{p_script}' is a directory.")
+    print("The given p-script at '" + str(p_script) + "' is a directory.")
     sys.exit(1)
 
 if not os.access(p_script, os.X_OK):
-    print(f"The given p-script at '{p_script}' is not executable. Run 'chmod a+x {p_script}' and try again.")
+    print("The given p-script at '" + str(p_script) + "' is not executable. Run 'chmod a+x " + str(p_script) + "' and try again.")
     sys.exit(1)
 
 if not os.path.isdir(base):
-    print(f"base dir {base} does not exist. fatal fuckin error")
+    print("base dir " + str(base) + " does not exist. fatal fuckin error")
     sys.exit(1)
 
-basedir = f"{base}/{test_cases}"
+basedir = "" + str(base) + "/" + str(test_cases) + ""
 if not os.path.isdir(basedir):
-    print(f"Invalid set of cases '{test_cases}'. Must be one of {dirs}.")
+    print("Invalid set of cases '" + str(test_cases) + "'. Must be one of " + str(dirs) + ".")
     sys.exit(1)
 
-if not os.path.isdir(f"{basedir}/accept"):
-    print(f"The given set of cases is missing '{basedir}/accept'.")
+if not os.path.isdir("" + str(basedir) + "/accept"):
+    print("The given set of cases is missing '" + str(basedir) + "/accept'.")
     sys.exit(1)
 
-if not os.path.isdir(f"{basedir}/reject"):
-    print(f"The given set of cases is missing '{basedir}/reject'.")
+if not os.path.isdir("" + str(basedir) + "/reject"):
+    print("The given set of cases is missing '" + str(basedir) + "/reject'.")
     sys.exit(1)
 
 
@@ -175,28 +175,28 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=max_threads) as executor:
     reject_jobs = []
 
     # for each file in the accept folder of the given test_cases suite
-    for test_case in os.listdir(f"{basedir}/accept"):
+    for test_case in os.listdir("" + str(basedir) + "/accept"):
         len_total += 1
         # runs a thread equivalent to the below:
         #
-        # test(abspath, f"{basedir}/accept/{test_case}", "ACCEPT")
+        # test(abspath, "" + str(basedir) + "/accept/" + str(test_case) + "", "ACCEPT")
         #
         # the above function tests the p_script with the given case and wants it to output ACCEPT.
         # executor.submit() returns a "future" that will contain our return value when the job completes, so we store that in accept_jobs
         accept_jobs.append(executor.submit(
             test,
             abspath,
-            f"{basedir}/accept/{test_case}",
+            "" + str(basedir) + "/accept/" + str(test_case) + "",
             "ACCEPT",
         ))
 
-    for test_case in os.listdir(f"{basedir}/reject"):
+    for test_case in os.listdir("" + str(basedir) + "/reject"):
         len_total += 1
-        # test(abspath, f"{basedir}/reject/{test_case}", "REJECT")
+        # test(abspath, "" + str(basedir) + "/reject/" + str(test_case) + "", "REJECT")
         reject_jobs.append(executor.submit(
             test,
             abspath,
-            f"{basedir}/reject/{test_case}",
+            "" + str(basedir) + "/reject/" + str(test_case) + "",
             "REJECT",
         ))
 
@@ -216,7 +216,7 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=max_threads) as executor:
 
 
 for fname, output in failed_accept:
-    print(f"Failed case '{fname}'")
+    print("Failed case '" + str(fname) + "'")
     print(">>>")
     print(green(open(fname, "r").read()))
     print(">>>")
@@ -231,7 +231,7 @@ for fname, output in failed_accept:
     print()
 
 for fname, output in failed_reject:
-    print(f"Failed case '{fname}'")
+    print("Failed case '" + str(fname) + "'")
     print(">>>")
     print(green(open(fname, "r").read()))
     print(">>>")
@@ -245,6 +245,6 @@ for fname, output in failed_reject:
     print(">>>")
     print()
 
-print(f"Failed {green(str(len(failed_accept) + len(failed_reject)))} out of {green(str(len_total))} cases")
+print("Failed " + str(green(str(len(failed_accept) + len(failed_reject)))) + " out of " + str(green(str(len_total))) + " cases")
 exit(len(failed_accept) + len(failed_reject))
 
