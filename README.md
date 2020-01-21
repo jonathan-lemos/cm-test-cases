@@ -1,6 +1,6 @@
 # C- Test Cases
 A list of test cases for Eggen's C- project.
-Includes an [automatic test running script](#test.py) and [a tool that builds an Eggen-style shar for you](#mkshar).
+Includes an [automatic test running script](#testpy-test-runner) and [a tool that builds an Eggen-style shar for you](#mkshar-shar-builder).
 
 ## Dependencies
 The Osprey has all of the required dependencies.
@@ -114,7 +114,7 @@ If you know the due date for the project, or you already have a documentation fi
 ## `test.py` (test runner)
 This script automatically runs a series of test cases on your project, similar to Eggen's grading script, telling you which ones failed.
 
-Similar to Eggen's grading script, you must use `test.py` with a p-script generated from [mkshar](#mkshar) or one that you wrote yourself.
+Similar to Eggen's grading script, you must use `test.py` with a p-script generated from [mkshar](#mkshar-shar-builder) or one that you wrote yourself.
 
 ### Usage
 If you are using the Osprey's copy of `test.py` (see [Getting the project](#getting-the-project)), you run it as follows:
