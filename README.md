@@ -27,7 +27,8 @@ Once you have done the above, you can use:
 ```shell
 $ test.py
 ```
-or ```shell
+or
+```shell
 $ mkshar
 ```
 
