@@ -21,6 +21,13 @@ To use the included shar builder `mkshar`, you will need:
 Most of the time, the project is already on the Osprey, which you can access using:
 ```shell
 $ /tmp/just_do_it # only needed the first time you use mkshar/test.py
+```
+
+Once you have done the above, you can use:
+```shell
+$ test.py
+```
+or ```shell
 $ mkshar
 ```
 
