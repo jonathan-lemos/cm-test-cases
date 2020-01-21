@@ -50,8 +50,7 @@ If you are using the Osprey's copy of `test.py` (see [Getting the project](#gett
 ```shell
 $ test.py [p-script] [parser|lex_yacc|semantic_analyzer]
 ```
-
-Note that the interpreter must be changed to `#!/usr/bin/python3.6` on Osprey or it will not work.
+Note that the interpreter must be changed to `#!/usr/bin/python3.6` on Osprey if not already done so or the script will not work.
 
 If you are not using the Osprey's copy of `mkshar`, `cd` to the project's directory and run the following:
 ```shell
