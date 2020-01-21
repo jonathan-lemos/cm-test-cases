@@ -2,7 +2,7 @@
 
 if [[ -z $4 ]]; then
     echo "mkshar v 1.4"
-	echo ""
+    echo ""
     echo "Turns your project into an Eggen-style shar,"
     echo "because I'm sick of people asking how to do it."
     echo ""
@@ -23,7 +23,7 @@ if [[ -z $4 ]]; then
     echo "Usage: $0 [directory] [project number] [main executable/class] [testcase] [turnin code]?"
     echo ""
     echo "Parameters:"
-	echo ""
+    echo ""
     echo \
 "[directory]
     The directory containing your project's files.
@@ -35,7 +35,7 @@ if [[ -z $4 ]]; then
     echo ""
     echo \
 "[project number]
-	'1' if this is the first project (lexer)
+    '1' if this is the first project (lexer)
     '2' if this is the second project (parser)
     and so on..."
     echo ""
@@ -52,17 +52,17 @@ if [[ -z $4 ]]; then
     This is a test file to demonstrate your project with.
 
     This can either be an absolute path
-	or a path relative to your project's directory."
+    or a path relative to your project's directory."
     echo ""
     echo \
 "[turnin code]
     This is the turnin code to use with your project (e.g. 'ree4991_1').
 
     This is only used to determine the due date
-	if your project does not have a doc file.
+    if your project does not have a doc file.
 
     If you do not need to determine the due date
-	or you already have a doc file, you do not need to supply this argument.
+    or you already have a doc file, you do not need to supply this argument.
 
     Again, this script does not turn in the project for you."
     echo ""
@@ -76,15 +76,15 @@ testcase=$4
 turnin_code=$5
 
 if ! [[ -z $turnin_code ]]; then
-	if ! turnin -d $turnin_code >/dev/null 2>&1; then
-    	echo "$turnin_code is not a valid turnin code"
-    	exit 1
-	fi
+    if ! turnin -d $turnin_code >/dev/null 2>&1; then
+        echo "$turnin_code is not a valid turnin code"
+        exit 1
+    fi
 
-	duedate=$(turnin -d $turnin_code | sed -re "s/.*$turnin_code:\s*(.*)$/\1/" | xargs -I{} date -d {}'-2 days' "+%m/%d/%y")
+    duedate=$(turnin -d $turnin_code | sed -re "s/.*$turnin_code:\s*(.*)$/\1/" | xargs -I{} date -d {}'-2 days' "+%m/%d/%y")
 else
-	duedate="[due date]"
-	turnin_code="[turnin code]"
+    duedate="[due date]"
+    turnin_code="[turnin code]"
 fi
 
 curdate=$(date "+%m/%d/%y")
@@ -204,7 +204,7 @@ mv out_fn test/
 cd test
 
 echo "******************************* MAKING TYPESCRIPT *********************************"
-script -c "echo -e \"unshar out_fn\nmake\ncat $testcase\n./p$prjnum $testcase\nexit\n\" | /bin/bash --norc -i"
+script -c "echo -e \"unshar out_fn\nmake\ncat $testcase\n./p$prjnum $testcase\nexit\n\" | /bin/bash --rcfile <(PS1='[\u@\h \W]\$ ') -i"
 if ! mv typescript ..; then
     echo "Failed to move typescript"
     exit 1
