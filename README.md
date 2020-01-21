@@ -32,6 +32,42 @@ $ git clone https://github.com/jonathan-lemos/cm-test-cases.git
 ```
 I recommend you run the above command on the Osprey, as the Osprey has all of the required dependencies.
 
+## `test.py` (test runner)
+This script automatically runs a series of test cases on your project, similar to Eggen's grading script, telling you which ones failed.
+
+Similar to Eggen's grading script, you must use `test.py` with a p-script generated from [mkshar](#mkshar-shar-builder) or one that you wrote yourself.
+
+### Usage
+If you are using the Osprey's copy of `test.py` (see [Getting the project](#getting-the-project)), you run it as follows:
+```shell
+$ test.py [p-script] [parser|lex_yacc|semantic_analyzer]
+```
+
+If you are not using the Osprey's copy of `mkshar`, `cd` to the project's directory and run the following:
+```shell
+$ ./test.py [p-script] [parser|lex_yacc|semantic_analyzer] [flags...]?
+```
+
+#### Example
+```shell
+$ test.py p2 parser
+```
+tests the project using the `p2` p-script in the current directory on the parser test cases.
+
+#### `[p-script]`
+This is a path to your p-script.
+
+Your p-script must take a single command line argument and run a program that prints `ACCEPT` or `REJECT` to the screen on its own line.
+
+#### `[parser|lex_yacc|semantic_analyzer]`
+* `parser` - Runs the parser test cases.
+* `lex_yacc` - Runs the lex/yacc test cases. *This is not the lexer*.
+* `semantic_analyzer` - Runs the semantic analyzer test cases.
+
+#### `[flags...]?`
+* `--help` - Prints a help message.
+* `--single-threaded` - Runs a single test case at a time instead of multiple. Use this if your project creates intermediate files.
+
 ## `mkshar` (shar builder)
 This script automatically builds a shar the way Eggen wants it if you're too lazy to do so.
 
@@ -110,40 +146,4 @@ It is only needed to determine the due date for the project if your documentatio
 **`mkshar` does not turn in the project for you.**
 
 If you know the due date for the project, or you already have a documentation file, you do not have to give this argument.
-
-## `test.py` (test runner)
-This script automatically runs a series of test cases on your project, similar to Eggen's grading script, telling you which ones failed.
-
-Similar to Eggen's grading script, you must use `test.py` with a p-script generated from [mkshar](#mkshar-shar-builder) or one that you wrote yourself.
-
-### Usage
-If you are using the Osprey's copy of `test.py` (see [Getting the project](#getting-the-project)), you run it as follows:
-```shell
-$ test.py [p-script] [parser|lex_yacc|semantic_analyzer]
-```
-
-If you are not using the Osprey's copy of `mkshar`, `cd` to the project's directory and run the following:
-```shell
-$ ./test.py [p-script] [parser|lex_yacc|semantic_analyzer] [flags...]?
-```
-
-#### Example
-```shell
-$ test.py p2 parser
-```
-tests the project using the `p2` p-script in the current directory on the parser test cases.
-
-#### `[p-script]`
-This is a path to your p-script.
-
-Your p-script must take a single command line argument and run a program that prints `ACCEPT` or `REJECT` to the screen on its own line.
-
-#### `[parser|lex_yacc|semantic_analyzer]`
-* `parser` - Runs the parser test cases.
-* `lex_yacc` - Runs the lex/yacc test cases. *This is not the lexer*.
-* `semantic_analyzer` - Runs the semantic analyzer test cases.
-
-#### `[flags...]?`
-* `--help` - Prints a help message.
-* `--single-threaded` - Runs a single test case at a time instead of multiple. Use this if your project creates intermediate files.
 
