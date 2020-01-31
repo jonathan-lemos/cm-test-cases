@@ -133,8 +133,7 @@ else
 	project_lang="unknown language"
 fi
 
-echo ""
-echo "Detected a project written in '$project_lang'"
+echo -e "Detected a project written in \033[33m$project_lang\033[m"
 echo ""
 
 if ! [[ -z $2 ]]; then
@@ -202,7 +201,7 @@ else
 	tmp_file=""
 
 	for file in $(ls $directory | grep -v '/'); do
-		if echo $file | egrep -i '.*test.*'; then
+		if echo $file | egrep -i '.*test.*' >/dev/null 2>&1; then
 			tmp_file=$file
 		fi
 	done
@@ -224,7 +223,7 @@ else
     fi
 fi
 
-if ! ls $testcase; then
+if ! ls $testcase >/dev/null 2>&1; then
     echo "Test case file '$testcase' does not exist"
     exit 1
 fi
@@ -258,9 +257,10 @@ if ! [[ -z $flag ]]; then
     echo -e "main file: \033[33m$main_file\033[m"
     echo -e "test case: \033[33m$testcase\033[m"
     if ! [[ $duedate == "[due date]" ]]; then
-        echo "due date: \033[33m$duedate\033[m"
+        echo -e "due date: \033[33m$duedate\033[m"
     fi
-    echo -n "Are these correct (y/n)?"
+	echo ""
+    echo -n "Are these correct (y/n)? "
     read yn
     if [[ ${yn:0:1} != "y" ]] && [[ ${yn:0:1} != "Y" ]]; then
         echo "Exiting..."
