@@ -1,6 +1,19 @@
 #!/bin/bash
 
-if [[ $@ == *--help* ]]; then
+if ![[ -z $1 ]] && [[ -z $4 ]]; then
+    echo "mkshar v 1.5"
+    echo ""
+    echo "Turns your project into an Eggen-style shar,"
+    echo "because I'm sick of people asking how to do it."
+    echo ""
+    echo "Usage: $0 [directory] [project number] [main executable/class] [testcase] [turnin code]?"
+    echo ""
+    echo -e "Type \033[33mmkshar --help\033[33m for more complete instructions."
+    echo ""
+    exit 0
+fi
+
+if [[ $@ == *--help* ]] || ![[ -z $1 ]] && [[ -z $4 ]]; then
     echo "mkshar v 1.5"
     echo ""
     echo "Turns your project into an Eggen-style shar,"
@@ -55,7 +68,7 @@ if [[ $@ == *--help* ]]; then
     or a path relative to your project's directory."
     echo ""
     echo \
-"[turnin code]
+"[turnin code]?
     This is the turnin code to use with your project (e.g. 'ree4991_1').
 
     This is only used to determine the due date
@@ -68,6 +81,10 @@ if [[ $@ == *--help* ]]; then
     echo ""
     exit 0
 fi
+
+echo "mkshar v1.5 interactive mode"
+echo -e "Use \033[33mmkshar --help\033[m to see the command line arguments for this script."
+echo ""
 
 flag=""
 
