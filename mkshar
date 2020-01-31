@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [[ -z $4 ]]; then
-    echo "mkshar v 1.4"
+if [[ $@ == *--help* ]]; then
+    echo "mkshar v 1.5"
     echo ""
     echo "Turns your project into an Eggen-style shar,"
     echo "because I'm sick of people asking how to do it."
@@ -14,7 +14,7 @@ if [[ -z $4 ]]; then
     echo ""
     echo "It also brings up a template doc.txt for you to fill in"
     echo -e "\033[33mif you do not have a documentation file (*doc*) in the project's directory\033[m."
-    echo 'By default, the doc file will be edited with \033[33mpico\033[m,'
+    echo -e "By default, the doc file will be edited with \033[33mpico\033[m,"
     echo -e "but you can change this to any editor by modifying the \033[36m\$EDITOR\033[m shell variable."
     echo ""
     echo -e "\033[31;1mIt does not turn in the project for you.\033[m"
@@ -69,11 +69,87 @@ if [[ -z $4 ]]; then
     exit 0
 fi
 
-directory=$1
-prjnum=$2
-main_file=$(echo $3 | sed -re 's/(.*)(\.java|\.c)/\1/')
-testcase=$4
-turnin_code=$5
+flag=""
+
+if ![[ -z $1 ]]; then
+    directory=$1
+else
+    flag="true"
+    while true; do
+        echo -n "Enter the directory (press enter to use the current directory): "
+        read directory
+        if [[ -z $directory ]]; then
+            directory="."
+        fi
+
+        if ! ls $directory; then
+            echo "The directory '"$directory"' is invalid"
+            continue
+        else
+            echo "Are these the files in your project (y/n)?"
+            read yn
+            if ![[ ${yn:0:1} == "y" ]] && ![[ ${yn:0:1} == "Y" ]]; then
+                break
+            else
+                continue
+            fi
+        fi
+    done
+fi
+
+if ! cd $directory; then
+    echo "'$directory' is not a valid directory"
+    exit 1
+fi
+
+if ![[ -z $2 ]]; then
+    prjnum=$2
+else
+    flag="true"
+    echo -n "Enter the project number (1 for lexer, 2 for parser, etc.): "
+    read prjnum
+    if [[ -z $prjnum ]] || ! cat $prjnum | egrep '[0-9]' >/dev/null 2>&1; then
+        echo -e "hey dumbass, i asked for a \033[33mnumber\033[m, not '"$prjnum"'"
+        exit 1
+    fi
+fi
+
+if ![[ -z $3 ]]; then
+    main_file=$3
+else
+    flag="true"
+    echo -n "Enter the main class (java) or file (python) or anything (c): "
+    read main_file
+    if [[ -z $main_file ]]; then
+        echo "main file cannot be blank. mkshar is not that smart atm"
+        exit 1
+    fi
+fi
+main_file=$(echo $main_file | sed -re 's/(.*)(\.java|\.c)/\1/')
+
+if ![[ -z $4 ]]; then
+    testcase=$4
+else
+    flag="true"
+    echo -n "Enter a file to test your project with:"
+    read testcase
+    if [[ -z $testcase ]]; then
+        echo "test case cannot be blank."
+        exit 1
+    fi
+fi
+
+if ! ls $testcase; then
+    echo "Test case file '$testcase' does not exist"
+    exit 1
+fi
+
+if ![[ -z $5 ]]; then
+    turnin_code=$5
+else
+    echo -n "Enter the turnin code (or leave it blank. this is only to determine the due date):"
+    read $turnin_code
+fi
 
 if ! [[ -z $turnin_code ]]; then
     if ! turnin -d $turnin_code >/dev/null 2>&1; then
@@ -88,6 +164,23 @@ else
 fi
 
 curdate=$(date "+%m/%d/%y")
+
+if ![[ -z $flag ]]; then
+    echo "directory: '$directory'"
+    ls $directory
+    echo "project number: '$prjnum'"
+    echo "main file: '$main_file'"
+    echo "test case: '$testcase'"
+    if ![[ $duedate == "[due date]" ]]; then
+        echo "due date: '$duedate'"
+    fi
+    echo -n "Are these correct (y/n)?"
+    read yn
+    if [[ ${yn:0:1} != "y" ]] && [[ ${yn:0:1} != "Y" ]]; then
+        echo "Exiting..."
+        exit 1
+    fi
+fi
 
 
 if ! cd $directory; then
@@ -105,7 +198,8 @@ if [[ -z $EDITOR ]]; then
 fi
 
 if ! ls | grep -i 'doc' >/dev/null 2>&1; then
-    echo "[your name]
+    echo "[this is your documentation file. fill it in]
+[your name]
 [class] Project $prjnum
 [name of project]
 Dr. Eggen
