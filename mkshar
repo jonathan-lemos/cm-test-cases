@@ -1,19 +1,6 @@
 #!/bin/bash
 
-if ![[ -z $1 ]] && [[ -z $4 ]]; then
-    echo "mkshar v 1.5"
-    echo ""
-    echo "Turns your project into an Eggen-style shar,"
-    echo "because I'm sick of people asking how to do it."
-    echo ""
-    echo "Usage: $0 [directory] [project number] [main executable/class] [testcase] [turnin code]?"
-    echo ""
-    echo -e "Type \033[33mmkshar --help\033[33m for more complete instructions."
-    echo ""
-    exit 0
-fi
-
-if [[ $@ == *--help* ]] || ![[ -z $1 ]] && [[ -z $4 ]]; then
+if [[ $@ == *--help* ]]; then
     echo "mkshar v 1.5"
     echo ""
     echo "Turns your project into an Eggen-style shar,"
@@ -82,13 +69,28 @@ if [[ $@ == *--help* ]] || ![[ -z $1 ]] && [[ -z $4 ]]; then
     exit 0
 fi
 
+
+if ! [[ -z $1 ]] && [[ -z $4 ]]; then
+    echo "mkshar v 1.5"
+    echo ""
+    echo "Turns your project into an Eggen-style shar,"
+    echo "because I'm sick of people asking how to do it."
+    echo ""
+    echo "Usage: $0 [directory] [project number] [main executable/class] [testcase] [turnin code]?"
+    echo ""
+    echo -e "Type \033[33mmkshar --help\033[m for more complete instructions."
+    echo ""
+    exit 0
+fi
+
 echo "mkshar v1.5 interactive mode"
 echo -e "Use \033[33mmkshar --help\033[m to see the command line arguments for this script."
+echo "Ctrl+C to exit"
 echo ""
 
 flag=""
 
-if ![[ -z $1 ]]; then
+if ! [[ -z $1 ]]; then
     directory=$1
 else
     flag="true"
@@ -105,7 +107,7 @@ else
         else
             echo "Are these the files in your project (y/n)?"
             read yn
-            if ![[ ${yn:0:1} == "y" ]] && ![[ ${yn:0:1} == "Y" ]]; then
+            if ! [[ ${yn:0:1} == "y" ]] && ! [[ ${yn:0:1} == "Y" ]]; then
                 break
             else
                 continue
@@ -119,7 +121,7 @@ if ! cd $directory; then
     exit 1
 fi
 
-if ![[ -z $2 ]]; then
+if ! [[ -z $2 ]]; then
     prjnum=$2
 else
     flag="true"
@@ -131,7 +133,7 @@ else
     fi
 fi
 
-if ![[ -z $3 ]]; then
+if ! [[ -z $3 ]]; then
     main_file=$3
 else
     flag="true"
@@ -144,7 +146,7 @@ else
 fi
 main_file=$(echo $main_file | sed -re 's/(.*)(\.java|\.c)/\1/')
 
-if ![[ -z $4 ]]; then
+if ! [[ -z $4 ]]; then
     testcase=$4
 else
     flag="true"
@@ -161,7 +163,7 @@ if ! ls $testcase; then
     exit 1
 fi
 
-if ![[ -z $5 ]]; then
+if ! [[ -z $5 ]]; then
     turnin_code=$5
 else
     echo -n "Enter the turnin code (or leave it blank. this is only to determine the due date):"
@@ -182,13 +184,13 @@ fi
 
 curdate=$(date "+%m/%d/%y")
 
-if ![[ -z $flag ]]; then
+if ! [[ -z $flag ]]; then
     echo "directory: '$directory'"
     ls $directory
     echo "project number: '$prjnum'"
     echo "main file: '$main_file'"
     echo "test case: '$testcase'"
-    if ![[ $duedate == "[due date]" ]]; then
+    if ! [[ $duedate == "[due date]" ]]; then
         echo "due date: '$duedate'"
     fi
     echo -n "Are these correct (y/n)?"
