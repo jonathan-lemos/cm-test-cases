@@ -101,13 +101,15 @@ else
             directory="."
         fi
 
+		echo ""
         if ! ls $directory; then
             echo "The directory '"$directory"' is invalid"
             continue
         else
-            echo "Are these the files in your project (y/n)?"
+			echo ""
+            echo -n "Are these the files in your project (y/n)? "
             read yn
-            if ! [[ ${yn:0:1} == "y" ]] && ! [[ ${yn:0:1} == "Y" ]]; then
+            if [[ ${yn:0:1} == "y" ]] || [[ ${yn:0:1} == "Y" ]]; then
                 break
             else
                 continue
@@ -121,14 +123,28 @@ if ! cd $directory; then
     exit 1
 fi
 
+if ls $directory | grep '^.*\.c$' >/dev/null 2>&1; then
+	project_lang="c"
+elif ls $directory | grep '^.*\.java$' >/dev/null 2>&1; then
+	project_lang="java"
+elif ls $directory | grep '^.*\.py$' >/dev/null 2>&1; then
+	project_lang="python"
+else
+	project_lang="unknown language"
+fi
+
+echo ""
+echo "Detected a project written in '$project_lang'"
+echo ""
+
 if ! [[ -z $2 ]]; then
     prjnum=$2
 else
     flag="true"
     echo -n "Enter the project number (1 for lexer, 2 for parser, etc.): "
     read prjnum
-    if [[ -z $prjnum ]] || ! cat $prjnum | egrep '[0-9]' >/dev/null 2>&1; then
-        echo -e "hey dumbass, i asked for a \033[33mnumber\033[m, not '"$prjnum"'"
+    if [[ -z $prjnum ]] || ! echo $prjnum | egrep '[0-9]' >/dev/null 2>&1; then
+        echo "project number needs to be a single digit, not '"$prjnum"'"
         exit 1
     fi
 fi
@@ -137,8 +153,40 @@ if ! [[ -z $3 ]]; then
     main_file=$3
 else
     flag="true"
-    echo -n "Enter the main class (java) or file (python) or anything (c): "
+
+	tmp_file=""
+
+	if [[ $project_lang == "python" ]]; then
+		for file in $(ls $directory | grep -v '/'); do
+			if egrep 'sys\.argv' $file;
+				tmp_file=$file
+			fi
+		done
+	fi
+
+	if [[ $project_lang == "java" ]]; then
+		for file in $(ls $directory | grep -v '/'); do
+			if egrep 'public static void main\(String\[\] .*\)' $file;
+				tmp_file=$file
+			fi
+		done
+	fi
+
+	if [[ $project_lang == "c" ]]; then
+		tmp_file="a.out"
+	fi
+
+	if [[ -z $tmp_file ]]; then
+    	echo -n "Enter the main class/file: "
+	else
+		echo -n "Enter the main class/file (enter for '$tmp_file'): "
+	fi
+
     read main_file
+	if [[ -z $main_file ]] && ! [[ -z $tmp_file ]]; then
+		main_file=$tmp_file
+	fi
+
     if [[ -z $main_file ]]; then
         echo "main file cannot be blank. mkshar is not that smart atm"
         exit 1
@@ -150,8 +198,26 @@ if ! [[ -z $4 ]]; then
     testcase=$4
 else
     flag="true"
-    echo -n "Enter a file to test your project with:"
+
+	tmp_file=""
+
+	for file in $(ls $directory | grep -v '/'); do
+		if echo $file | egrep -i '.*test.*';
+			tmp_file=$file
+		fi
+	done
+
+	if [[ -z $tmp_file ]]; then
+    	echo -n "Enter a file to test your project with: "
+	else
+		echo -n "Enter a file to test your project with (enter to use '$tmp_file'): "
+	fi
+
     read testcase
+	if [[ -z $testcase ]] && ! [[ -z $tmp_file ]]; then
+		testcase=$tmp_file
+	fi
+
     if [[ -z $testcase ]]; then
         echo "test case cannot be blank."
         exit 1
@@ -166,8 +232,8 @@ fi
 if ! [[ -z $5 ]]; then
     turnin_code=$5
 else
-    echo -n "Enter the turnin code (or leave it blank. this is only to determine the due date):"
-    read $turnin_code
+    echo -n "Enter the turnin code (or leave it blank. this is only to determine the due date): "
+    read turnin_code
 fi
 
 if ! [[ -z $turnin_code ]]; then
@@ -185,13 +251,14 @@ fi
 curdate=$(date "+%m/%d/%y")
 
 if ! [[ -z $flag ]]; then
-    echo "directory: '$directory'"
+    echo -e "directory: \033[33m$directory\033[m"
     ls $directory
-    echo "project number: '$prjnum'"
-    echo "main file: '$main_file'"
-    echo "test case: '$testcase'"
+	echo ""
+    echo -e "project number: \033[33m$prjnum\033[m"
+    echo -e "main file: \033[33m$main_file\033[m"
+    echo -e "test case: \033[33m$testcase\033[m"
     if ! [[ $duedate == "[due date]" ]]; then
-        echo "due date: '$duedate'"
+        echo "due date: \033[33m$duedate\033[m"
     fi
     echo -n "Are these correct (y/n)?"
     read yn
@@ -232,13 +299,13 @@ Due: $duedate
 fi
 
 if ! ls | grep -i 'makefile' > /dev/null 2>&1; then
-    if ls *.c >/dev/null 2>&1; then
+    if [[ $project_lang == "c" ]]; then
         echo "all:
 	gcc -std=c99 *.c -o $main_file" > Makefile
-    elif ls *.java >/dev/null 2>&1; then
+    elif [[ $project_lang == "java" ]]; then
         echo "all:
 	javac *.java" > Makefile
-    elif ls *.py >/dev/null 2>&1; then
+    elif [[ $project_lang == "python" ]]; then
         echo "all:
 	@echo 'No compilation needed. Project in python.'" > Makefile
     else
